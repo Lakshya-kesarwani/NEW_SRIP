@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internship Application</title>
+    <style>
+        /* Reset margins and paddings for a consistent layout */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Body and general styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    padding: 20px;
+}
+
+/* Navbar styling */
+.header {
+    display: flex;
+    justify-content:left;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(36, 13, 13, 0.1);
+    background-color: #ffffff;
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 30px;
+    border-radius: 8px;
+}
+
+.header .logo img {
+    height: 5rem;
+}
+
+.header h1 {
+    color: #2f538d;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-left: 10vw;
+    
+}
+
+/* Container for the form */
+.container {
+    background-color: #ffffff;
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Form title */
+.form-title {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Grid layout for form inputs */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+/* Full-width for some form elements */
+.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Form input and label styling */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+}
+
+textarea {
+    height: 150px;
+    resize: vertical;
+}
+
+.radio-group {
+    display: flex;
+    gap: 15px;
+}
+
+.radio-group label {
+    font-weight: normal;
+}
+
+/* Styling for required fields */
+.required:after {
+    content: " *";
+    color: red;
+}
+
+/* Button styling */
+.submit-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header h1 {
+        font-size: 1.8rem;
+    }
+
+    .submit-btn {
+        font-size: 14px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <!-- Navbar: Heading Only -->
+    <header class="header">
+        <div class="logo">
+            <img src="../static/srip-log.png" alt="SRIP Logo">
+        </div>
+        <h1>SRIP Internship Application 2025</h1>
+        
+    </header>
+
+    <div class="container">
+        <h1 class="form-title">Project Details</h1>
+        <form method="POST" action="{{ url_for('prospective_intern') }}">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="faculty" class="required">Faculty</label>
+                    <select name="faculty" id="faculty" required onchange="fetchProjects(this.value)">
+                        <option value="">Select Faculty</option>
+                        {% for faculty in faculties %}
+                        <option value="{{ faculty.faculty_id }}">{{ faculty.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Project Code Selection -->
+                <div class="form-group">
+                    <label for="project_code" class="required">Project Code</label>
+                    <select name="project_code" id="project_code" required onchange="fillProjectTitle(this.value)">
+                        <option value="">Select Project Code</option>
+                    </select>
+                </div>
+                
+                <!-- Project Title Autofill -->
+                <div class="form-group">
+                    <label for="project_title" class="required">Project Title</label>
+                    <input type="text" name="project_title" id="project_title" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="full_name" class="required">Full Name</label>
+                    <input type="text" name="full_name" id="full_name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="mobile" class="required">Mobile</label>
+                    <input type="tel" name="mobile" id="mobile" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="nationality" class="required">Nationality</label>
+                    <input type="text" name="nationality" id="nationality" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" name="phone" id="phone">
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="required">Email ID</label>
+                    <input type="email" name="email" id="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="alternate_email" class="required">Alternate Email</label>
+                    <input type="email" name="alternate_email" id="alternate_email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="permanent_city" class="required">Permanent City</label>
+                    <input type="text" name="permanent_city" id="permanent_city" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="date_of_birth" class="required">Date of Birth</label>
+                    <input type="date" name="date_of_birth" id="date_of_birth" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="degree" class="required">Degree</label>
+                    <input type="text" name="degree" id="degree" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="department" class="required">Department</label>
+                    <input type="text" name="department" id="department" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="college_name" class="required">College Name</label>
+                    <input type="text" name="college_name" id="college_name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="year_of_joining" class="required">Year of joining the college</label>
+                    <input type="number" name="year_of_joining" id="year_of_joining" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="city" class="required">College City</label>
+                    <input type="text" name="city" id="city" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="state" class="required">College State</label>
+                    <input type="text" name="state" id="state" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="country" class="required">College Country</label>
+                    <input type="text" name="country" id="country" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="required">GPA/CPI/Percentage</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="gpa_type" value="percentage" checked> Percentage
+                        </label>
+                        <label>
+                            <input type="radio" name="gpa_type" value="gpa"> GPA/CPI
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="gpa_value" class="required">Value</label>
+                    <input type="number" name="gpa_value" id="gpa_value" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="required">Gender</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="gender" value="male" checked> Male
+                        </label>
+                        <label>
+                            <input type="radio" name="gender" value="female"> Female
+                        </label>
+                        <label>
+                            <input type="radio" name="gender" value="other"> Other
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="statement_of_purpose" class="required">Statement of Purpose</label>
+                    <textarea name="statement_of_purpose" id="statement_of_purpose" required></textarea>
+                </div>
+
+                <div class="form-group full-width">
+                    <label class="required">Will you be able to complete 8 weeks of Internship between May 5 to July 15?</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="can_complete_internship" value="yes" checked> Yes
+                        </label>
+                        <label>
+                            <input type="radio" name="can_complete_internship" value="no"> No
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <button type="submit" class="submit-btn">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+<script>
+    function fetchProjects(facultyId) {
+        // Clear project dropdown and title if no faculty is selected
+        if (!facultyId) {
+            document.getElementById("project_code").innerHTML = '<option value="">Select Project Code</option>';
+            document.getElementById("project_title").value = "";
+            return;
+        }
+
+        // Fetch projects for the selected faculty
+        fetch(`/get_projects?faculty_id=${facultyId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Populate project code dropdown
+                let projectCodeDropdown = document.getElementById("project_code");
+                projectCodeDropdown.innerHTML = '<option value="">Select Project Code</option>';
+                data.projects.forEach(project => {
+                    let option = document.createElement("option");
+                    option.value = project.project_code;
+                    option.text = project.project_code;
+                    option.setAttribute("data-title", project.project_title);
+                    projectCodeDropdown.appendChild(option);
+                });
+            });
+    }
+
+    function fillProjectTitle(projectCode) {
+        // Auto-fill project title based on selected project code
+        let selectedOption = document.querySelector(`#project_code option[value="${projectCode}"]`);
+        document.getElementById("project_title").value = selectedOption ? selectedOption.getAttribute("data-title") : "";
+    }
+</script>
+</body>
+</html>

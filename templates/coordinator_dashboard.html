@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard</title>
+<style>
+    /* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #ffffff;
+    background-color: #ffffff; /* Navy blue for the outer areas */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #ffffff; /* Slightly darker navy for header */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: #2f538d;
+}
+
+.header-container {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    width: 100%;
+}
+
+.logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo img {
+    height: 10vh;
+   
+}
+
+.menu-icon {
+    display: none; /* Hide hamburger by default */
+    font-size: 24px;
+    cursor: pointer;
+    color: #2f538d;
+}
+
+.nav-menu {
+    margin-left: 5%;
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping to multiple rows */
+    gap: 1%;
+    justify-content:flex-start;
+    width: 100%;
+}
+
+.nav-menu .tab {
+    text-decoration: none;
+    color: #2f538d;
+    padding: 10px 15px;
+    transition: background-color 0.3s ease;
+}
+
+.nav-menu .tab:hover {
+    background-color: #2f538d;
+    color: #ffffff;
+}
+
+/* Middle Content Section */
+.content {
+    background-color: #ffffff; /* White background for middle content */
+    color: #333333; /* Darker text for contrast on white background */
+    padding: 40px 20px;
+    margin: 20px auto; /* Add spacing from header/footer */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    min-width: 90vw; /* Center and limit the content width */
+    flex: 1; /* Ensures content takes up available space */
+}
+
+/* Responsive Design for Multi-Row Navbar */
+@media (max-width: 992px) {
+    .menu-icon {
+        display: block; /* Show hamburger icon for medium screens */
+    }
+
+    .nav-menu {
+        display: none; /* Hide navbar options when hamburger is shown */
+    }
+
+    .nav-menu.show {
+        display: flex; /* Show navbar options when toggled */
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background-color: #2f538d;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-menu .tab {
+        padding: 10px;
+        text-align: center;
+    }
+}
+
+@media (min-width: 993px) {
+    .menu-icon {
+        display: none; /* Ensure hamburger is hidden for larger screens */
+    }
+
+    .nav-menu {
+        display: flex; /* Ensure navbar is visible for larger screens */
+    }
+}
+
+/* Footer Styles */
+.footer {
+    text-align: center;
+    background-color: #2f538d;
+    color: #ffffff;
+    position: fixed; /* Fix footer to the bottom */
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+/* Utility */
+.hidden {
+    display: none !important;
+}
+
+</style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <img src="../static/srip-log.png" alt="SRIP Logo">
+        </div>
+        <div class="menu-icon" onclick="toggleMenu()">&#9776;</div> <!-- Hamburger Icon -->
+        <nav class="nav-menu">
+            <a href="#" class="tab">All Projects (Co)</a>
+            <a href="#" class="tab">Add Faculty (Co)</a>
+            <a href="#" class="tab">Faculty Account Approval (Co)</a>
+            <a href="#" class="tab">All Applicants (Co)</a>
+            <a href="#" class="tab">Selected Interns (Co)</a>
+            <a href="#" class="tab">Bulk Mail (Co)</a>
+            <a href="#" class="tab">Confirmed (Round 1) (Co)</a>
+            <a href="#" class="tab">Combine NC Waiting List (Co)</a>
+            <a href="#" class="tab">Confirmed (Round 2) (Co)</a>
+            <a href="#" class="tab">Waiting List (Co)</a>
+            <a href="#" class="tab">Final Report/Abstract (Co)</a>
+        </nav>
+        
+    </header>
+
+    <main class="content">
+        <h1>Welcome to the Faculty Dashboard</h1>
+        <p>Select a tab above to view or manage related content.</p>
+    </main>
+
+    <footer class="footer">
+        <p>Faculty Dashboard - SRIP</p>
+        <p>Contact: faculty@institute.edu | Tel: +123-456-7890</p>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const navMenu = document.querySelector('.nav-menu');
+            navMenu.classList.toggle('show');
+        }
+    </script>
+    
+</body>
+</html>

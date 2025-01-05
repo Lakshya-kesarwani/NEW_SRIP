@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SRIP Portal</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items:flex-start;
+            height: 100vh; 
+            
+        }
+        
+        .container {
+            text-align: center;
+            padding: 5px;
+            padding-top: 0px;
+            max-width: 600px;
+
+        }
+        .logo{
+            padding-top: 13vh;
+        }
+        .logo img {
+            min-height: 100px;
+            width: auto;
+            margin-bottom: 20px;
+        }
+        
+        header h1 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color:#f0f0f0;
+            padding: 10%;
+            border-radius: 5%;
+            border-top-left-radius: 0%;
+            border-top-right-radius: 0%;
+        }
+        
+        .button {
+            display: block;
+            padding: 25px 40px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            border-radius: 8px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .button-prospective {
+            background-color: #2196f3; /* Green */
+        }
+        
+        .button-selected {
+            background-color: #4caf50; /* Blue */
+        }
+        
+        .button-faculty {
+            background-color: #ff9800; /* Orange */
+        }
+        
+        .button-coordinator {
+            background-color: #f44336; /* Red */
+        }
+        
+        img{
+            mix-blend-mode:normal;
+        } 
+        @keyframes marquee-scroll {
+            0% { transform: translateX(100%); }  /* Start just off-screen to the right */
+            100% { transform: translateX(-100%); }  /* Move off-screen to the left */
+        }
+        .marquee b:hover {
+            animation-play-state: paused; /* Pauses animation on hover */
+        }
+        .marquee {
+            overflow: hidden;           /* Hide overflowing content */
+            white-space: nowrap;        /* Prevent text wrapping */
+            position: relative;
+            width:auto;
+            padding: 12px;
+            padding-top: 1rem;
+            border-top-left-radius: 0%;
+            border-top-right-radius: 0%;
+            background-color: #f0f0f0;  /* Optional: background color for better visibility */
+        }
+        
+        .marquee b {
+            display: inline-block;
+               /* Start fully off-screen */
+            animation: marquee-scroll 7s linear infinite;  /* Adjust speed with duration */
+            animation-play-state: running; 
+        }
+        
+        
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="../static/srip-log.png" alt="SRIP Logo">
+        </div>
+        <header>
+            <h1>Summer Research Internship Program</h1>
+        </header>
+        <div class="marquee">
+            <b>The SRIP 2025 registrations has not been started yet. Please find other details 
+               <a href="https://srip.iitgn.ac.in/info/srip-2024/" target="_blank">here.</a>
+            </b>
+        </div>
+            <div class="buttons">
+            <a href="/prospective_intern" class="button button-prospective">Prospective Intern</a>
+            <a href="/intern_login" class="button button-selected">Selected Intern</a>
+            <a href="/faculty_login" class="button button-faculty">Faculty</a>
+            <a href="/coordinator_login" class="button button-coordinator">Coordinator</a>
+        </div>
+    </div>
+</body>
+</html>
