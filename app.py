@@ -82,6 +82,9 @@ def prospective_intern():
 @app.route('/coordinator_login')
 def coordinator_login():
     return render_template("coordinator_dashboard.html")
+@app.route('/faculty_login')
+def coordinator_login():
+    return render_template("faculty_dashboard.html")
 
 
 @app.route('/get_projects')
