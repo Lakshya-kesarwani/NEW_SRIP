@@ -9,7 +9,7 @@ app.secret_key = 'your_secret_key'
 
 # MySQL configurations
 app.config['MYSQL_HOST'] = os.getenv("HOST")
-app.config['MYSQL_PORT'] = os.getenv("PORT")
+app.config['MYSQL_PORT'] = int(os.getenv("PORT"))
 app.config['MYSQL_USER'] = os.getenv("USER")
 app.config['MYSQL_PASSWORD'] = os.getenv("PASSWORD")
 app.config['MYSQL_DB'] = os.getenv("DB")
@@ -78,6 +78,10 @@ def prospective_intern():
     cursor.execute('SELECT faculty_id, name FROM faculty WHERE approved = 1')
     faculties = cursor.fetchall()
     return render_template('prospective_intern.html', faculties=faculties)
+
+@app.route('/coordinator_login')
+def coordinator_login():
+    return render_template("coordinator_dashboard.html")
 
 
 @app.route('/get_projects')
