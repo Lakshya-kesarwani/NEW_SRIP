@@ -1,4 +1,6 @@
 flask
 flask_mysqldb
-MySQLdb.cursors
+mysql
+mysql-connector
+mysqlclient
 bcrypt
