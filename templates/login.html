@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <title>Log In</title>
+        <link rel="stylesheet" type="text/css" href="css/login.css">
+        <script src="js/login.js"></script>
+    </head>
+    <style>
+        h1 {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        form{
+            background: #111;
+            padding: 60px;
+            max-width: 450px;
+            margin: 0 auto;
+            border-radius: 10px;
+            box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.5);
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #111;
+            border: 1px solid #444;
+            color: white;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #3498db;
+            border: 0;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+
+    </style>
+
+    <body>
+        <div class="login">
+            <h1>Log In</h1>
+            <form id="login-form" action="/login" method="post">
+                <input type="text" name="username" placeholder="Username" required="required" />
+                <input type="password" name="password" placeholder="Password" required="required" />
+                <button type="submit" class="btn btn-primary btn-block btn-large">Log In</button>
+            </form>
+        </div>
+</html>

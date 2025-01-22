@@ -1,22 +1,91 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash,jsonify
 from flask_mysqldb import MySQL
+from flask_mysqldb import MySQL
+
 import MySQLdb
 import bcrypt
 import os 
-
+from flask_restful import Resource, Api
+from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+load_dotenv()
+from flask_jwt_extended import create_access_token,JWTManager
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 # MySQL configurations
-app.config['MYSQL_HOST'] = os.getenv("HOST")
-app.config['MYSQL_PORT'] = (os.getenv("PORT"))
-app.config['MYSQL_USER'] = os.getenv("USER")
-app.config['MYSQL_PASSWORD'] = os.getenv("PASSWORD")
-app.config['MYSQL_DB'] = os.getenv("SRIP_P")
+db_host = os.getenv("HOST")
+db_port = 21719
+db_user = os.getenv("USER")
+db_password = os.getenv("PASSWORD")
+db_name = os.getenv("DB")
 
+print(db_host,db_port,db_user,db_password,db_name)
+
+app.config['MYSQL_HOST'] = db_host
+app.config['MYSQL_PORT'] = db_port
+app.config['MYSQL_USER'] = db_user
+app.config['MYSQL_PASSWORD'] = db_password
+app.config['MYSQL_DB'] = db_name
+# f"avnadmin@mysql-15f7ba09-iitgn.g.aivencloud.com:21719/defaultdb"
+
+# SQLAlchemy Configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+api = Api(app)
+jwt = JWTManager(app)
 mysql = MySQL(app)
 
-# Route for Home Page
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True,autoincrement=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
+
+with app.app_context():
+    db.create_all()
+    
+class UserRegistration(Resource):
+    def post(self):
+        data = request.get_json()
+        print("********************************")
+        print(type(data))
+        print("********************************")
+        
+        username = data.get('username')
+        password = data.get('password')
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        
+        if not username or not password:
+            return {'message': 'Missing username or password'}, 400
+        
+        user = User.query.filter_by(username=username).first()
+        if user:
+            return {'message': 'User already exists'}, 400
+        new_user = User(username=username, password=password)
+        db.session.add(new_user)
+        db.session.commit()
+        return {'message': 'User created successfully'}, 201
+    
+class UserLogin(Resource):
+    def post(self):
+        print(request.get_json())
+        data = request.get_json()
+        username = data['username']
+        password = data['password']
+        print(username,password)
+        user = User.query.filter_by(username=username).first()
+        if not user or not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+            return {'message': 'Invalid username or password'}, 401
+        
+        access_token = create_access_token(identity=user.id)
+        return {'access_token': access_token}, 200
+
+api.add_resource(UserRegistration, '/register')
+api.add_resource(UserLogin, '/login')
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -49,7 +118,7 @@ def prospective_intern():
         project_code = request.form['project_code']
         # project_title = ""
 
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
         
         # Insert into database
         cursor.execute('''
@@ -81,11 +150,11 @@ def prospective_intern():
 
 @app.route('/coordinator_login')
 def coordinator_login():
-    return render_template("coordinator_dashboard.html")
+    return render_template("login.html")
+
 @app.route('/faculty_login')
 def faculty_login():
-    return render_template("faculty_dashboard.html")
-
+    return render_template("faculty-dashboard.html")
 
 @app.route('/get_projects')
 def get_projects():
@@ -98,3 +167,5 @@ def get_projects():
     return jsonify({"projects": projects}), 200
 if __name__ == '__main__':
     app.run(debug=True)
+
+
