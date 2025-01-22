@@ -1,15 +1,16 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash,jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, flash,jsonify,make_response
 from flask_mysqldb import MySQL
 from flask_mysqldb import MySQL
 
 import MySQLdb
+import json
 import bcrypt
 import os 
 from flask_restful import Resource, Api
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 load_dotenv()
-from flask_jwt_extended import create_access_token,JWTManager
+from flask_jwt_extended import create_access_token,JWTManager, jwt_required, get_jwt_identity, get_jwt, set_access_cookies, unset_jwt_cookies
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
@@ -27,7 +28,6 @@ app.config['MYSQL_PORT'] = db_port
 app.config['MYSQL_USER'] = db_user
 app.config['MYSQL_PASSWORD'] = db_password
 app.config['MYSQL_DB'] = db_name
-# f"avnadmin@mysql-15f7ba09-iitgn.g.aivencloud.com:21719/defaultdb"
 
 # SQLAlchemy Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
@@ -43,13 +43,14 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True,autoincrement=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
+    role = db.Column(db.String(100), nullable=False, default='user')
 
 with app.app_context():
     db.create_all()
     
 class UserRegistration(Resource):
     def post(self):
-        data = request.get_json()
+        data = request.form
         print("********************************")
         print(type(data))
         print("********************************")
@@ -64,24 +65,63 @@ class UserRegistration(Resource):
         user = User.query.filter_by(username=username).first()
         if user:
             return {'message': 'User already exists'}, 400
-        new_user = User(username=username, password=password)
+        new_user = User(username=username, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
         return {'message': 'User created successfully'}, 201
     
 class UserLogin(Resource):
+    # @app.route('/login')
+    # def post(self):
+    #     content_type = request.headers.get('Content-Type')
+    #     print("Request Content-Type:", content_type)
+
+    #     if content_type == 'application/x-www-form-urlencoded':
+    #         data = request.form
+    #     elif content_type == 'application/json':
+    #         data = request.get_json()
+    #     else:
+    #         return {'message': 'Unsupported Content-Type'}, 400
+
+    #     username = data.get('username')
+    #     password = data.get('password')
+    #     print(username,password)
+    #     user = User.query.filter_by(username=username).first()
+    #     if not user or not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+    #         return {'message': 'Invalid username or password'}, 401
+        
+    #     access_token = create_access_token(identity=user.id)
+    #     return {'access_token': access_token}, 200
+    @app.route('/login')
     def post(self):
-        print(request.get_json())
-        data = request.get_json()
-        username = data['username']
-        password = data['password']
-        print(username,password)
+        content_type = request.headers.get('Content-Type')
+        
+        if content_type == 'application/x-www-form-urlencoded':
+            data = request.form
+        elif content_type == 'application/json':
+            data = request.get_json()
+        else:
+            return {'message': 'Unsupported Content-Type'}, 400
+
+        username = data.get('username')
+        password = data.get('password')
+        
         user = User.query.filter_by(username=username).first()
-        if not user or not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+        print(password,user.password)
+        print("********************************")
+        if not user:
             return {'message': 'Invalid username or password'}, 401
         
-        access_token = create_access_token(identity=user.id)
-        return {'access_token': access_token}, 200
+        try:
+            if not bcrypt.checkpw(password.encode('utf-8'), (user.password).encode('utf-8')):
+                return {'message': 'Invalid username or password'}, 401
+        except ValueError:
+            return {'message': 'Invalid password format'}, 401
+            
+        access_token = create_access_token(identity=str(user.id))
+        response = make_response(jsonify({'access_token': access_token}))
+        set_access_cookies(response, access_token)
+        return response
 
 api.add_resource(UserRegistration, '/register')
 api.add_resource(UserLogin, '/login')
@@ -89,6 +129,34 @@ api.add_resource(UserLogin, '/login')
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.route('/user_registration')
+def user_registration():
+    return render_template('register.html')
+
+class ProtectedResource(Resource):
+    @jwt_required()
+    def get(self):
+        current_user_id = get_jwt_identity()
+        return {'message': f'Welcome, user {current_user_id}!'}, 200
+
+blacklist = set()
+
+@jwt.token_in_blocklist_loader
+def check_if_token_in_blacklist(jwt_header, jwt_payload):
+    return jwt_payload['jti'] in blacklist
+
+class UserLogout(Resource):
+    @jwt_required()
+    def post(self):
+        jti = get_jwt()['jti']  
+        blacklist.add(jti)
+        return {'message': 'Successfully logged out'}, 200
+@app.route('/coordinator_login')
+def coordinator_login():
+    return render_template("login.html")
+
 
 @app.route('/prospective_intern', methods=['GET', 'POST'])
 def prospective_intern():
@@ -148,9 +216,6 @@ def prospective_intern():
     faculties = cursor.fetchall()
     return render_template('prospective_intern.html', faculties=faculties)
 
-@app.route('/coordinator_login')
-def coordinator_login():
-    return render_template("login.html")
 
 @app.route('/faculty_login')
 def faculty_login():
@@ -167,5 +232,4 @@ def get_projects():
     return jsonify({"projects": projects}), 200
 if __name__ == '__main__':
     app.run(debug=True)
-
 
