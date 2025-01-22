@@ -12,12 +12,11 @@ from dotenv import load_dotenv
 load_dotenv()
 from flask_jwt_extended import create_access_token,JWTManager, jwt_required, get_jwt_identity, get_jwt, set_access_cookies, unset_jwt_cookies
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
 
 # MySQL configurations
 db_host = os.getenv("HOST")
 db_port = 21719
-db_user = os.getenv("USER")
+db_user = "avnadmin"
 db_password = os.getenv("PASSWORD")
 db_name = os.getenv("DB")
 
@@ -28,11 +27,12 @@ app.config['MYSQL_PORT'] = db_port
 app.config['MYSQL_USER'] = db_user
 app.config['MYSQL_PASSWORD'] = db_password
 app.config['MYSQL_DB'] = db_name
+print(f"Host: {db_host}, User: {db_user}, Password: {db_password}, DB Name: {db_name}")
 
 # SQLAlchemy Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
+app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key' 
 db = SQLAlchemy(app)
 api = Api(app)
 jwt = JWTManager(app)
